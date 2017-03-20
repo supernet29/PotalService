@@ -58,6 +58,6 @@ public class UserDaoTest {
 
     private static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        return DriverManager.getConnection("jdbc:mysql://localhost/woochan?characterEncoding=utf-8", "jeju", "1234");
+        return DriverManager.getConnection("jdbc:mysql://117.17.102.106/woochan?characterEncoding=utf-8", "root", "1234");
     }
 }
