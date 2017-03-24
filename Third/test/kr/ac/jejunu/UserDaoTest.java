@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import static org.hamcrest.core.Is.is;
 
@@ -15,7 +16,7 @@ public class UserDaoTest {
     UserDao userDao;
     @Before
     public void setup() throws Exception{
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        ApplicationContext context = new FileSystemXmlApplicationContext("resource/setting.xml");
         userDao = context.getBean("userDao", UserDao.class);
     }
 
