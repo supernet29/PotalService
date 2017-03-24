@@ -11,7 +11,7 @@ import static org.hamcrest.core.Is.is;
 public class UserDaoTest {
     @Test
     public void getUserName() throws Exception{
-        UserDao userDao = new JejuUserDao();
+        UserDao userDao = new UserDao(new JejuConnectionMaker());
         long id  = 1;
         String name = "woochan";
         String password = "1234";
@@ -30,7 +30,7 @@ public class UserDaoTest {
         User user = new User();
         user.setName(name);
         user.setPassword(password);
-        UserDao userDao = new JejuUserDao();
+        UserDao userDao = new UserDao(new JejuConnectionMaker());
         Long id = userDao.addUser(user);
         user = userDao.getUser(id);
         Assert.assertThat(name, is(user.getName()));
@@ -39,7 +39,7 @@ public class UserDaoTest {
 
     @Test
     public void getHallaUserName() throws Exception{
-        UserDao userDao = new HallaUserDao();
+        UserDao userDao = new UserDao(new HallaConnectionMaker());
         long id  = 1;
         String name = "woochan";
         String password = "1234";
@@ -58,7 +58,7 @@ public class UserDaoTest {
         User user = new User();
         user.setName(name);
         user.setPassword(password);
-        UserDao userDao = new HallaUserDao();
+        UserDao userDao = new UserDao(new HallaConnectionMaker());
         Long id = userDao.addUser(user);
         user = userDao.getUser(id);
         Assert.assertThat(name, is(user.getName()));

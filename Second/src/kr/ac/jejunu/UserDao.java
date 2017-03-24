@@ -5,10 +5,16 @@ import java.sql.*;
 /**
  * Created by super on 2017-03-15.
  */
-public abstract class UserDao {
+public class UserDao {
+    private ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker){
+        this.connectionMaker = connectionMaker;
+    }
+
     public User getUser(long id) throws SQLException, ClassNotFoundException {
         // database is in mysql
-        Connection connection = getConnection();
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement query = connection.prepareStatement("select id, name, password from userinfo where id = ?");
         query.setLong(1, id);
         ResultSet result = query.executeQuery();
@@ -23,7 +29,7 @@ public abstract class UserDao {
 
     public Long addUser(User user) throws ClassNotFoundException, SQLException {
         // database is in mysql
-        Connection connection = getConnection();
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement query = connection.prepareStatement("insert into userinfo (name, password) values(?, ?)");
         query.setString(1, user.getName());
         query.setString(2, user.getPassword());
@@ -40,8 +46,4 @@ public abstract class UserDao {
         connection.close();
         return id;
     }
-
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
-    //Class.forName("com.mysql.jdbc.Driver");
-    //return DriverManager.getConnection("jdbc:mysql://localhost/jeju?characterEncoding=utf-8", "jeju", "1234");
 }
