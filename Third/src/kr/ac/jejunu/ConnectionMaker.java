@@ -7,5 +7,5 @@ import java.sql.SQLException;
  * Created by super on 2017-03-24.
  */
 public interface ConnectionMaker {
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+    Connection getConnection() throws ClassNotFoundException, SQLException;
 }
