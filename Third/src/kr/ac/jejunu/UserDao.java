@@ -1,6 +1,7 @@
 package kr.ac.jejunu;
 
 import java.sql.*;
+import java.util.Objects;
 
 /**
  * Created by super on 2017-03-15.
@@ -13,16 +14,17 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
+    //TODO make selectQuery() and refactor
     public User getUser(long id) throws SQLException, ClassNotFoundException {
         // database is in mysql
         User user = null;
         Connection connection = null;
         PreparedStatement query = null;
         ResultSet result = null;
+        PrepareStatementStrategy statementStrategy = new GetUserStatement();
         try {
             connection = connectionMaker.getConnection();
-            query = connection.prepareStatement("select id, name, password from userinfo where id = ?");
-            query.setLong(1, id);
+            query = statementStrategy.makePrepareStatement(connection, id);
             result = query.executeQuery();
             if (result.next()) {
                 user = new User();
@@ -58,26 +60,17 @@ public class UserDao {
         return user;
     }
 
-    public Long addUser(User user) throws ClassNotFoundException, SQLException {
-        // database is in mysql
+    //TODO make selectQuery() and refactor
+    public Long getLastInsertId(Connection connection) throws SQLException {
+        long id = 0;
+        PrepareStatementStrategy statementStrategy = new GetLastInsertInsertStatement();
         ResultSet resultSet = null;
         PreparedStatement query = null;
-        Connection connection = null;
         try {
-            connection = connectionMaker.getConnection();
-            query = connection.prepareStatement("insert into userinfo (name, password) values(?, ?)");
-            query.setString(1, user.getName());
-            query.setString(2, user.getPassword());
-            query.executeUpdate();
-            query.close();
-
-            query = connection.prepareStatement("select last_insert_id()");
+            query = statementStrategy.makePrepareStatement(connection, id);
             resultSet = query.executeQuery();
-            resultSet.next();
-            long id = resultSet.getLong(1);
-            return id;
-        } catch (ClassNotFoundException e) {
-            throw e;
+            if(resultSet.next())
+                id = resultSet.getLong(1);
         } catch (SQLException e) {
             throw e;
         } finally {
@@ -93,6 +86,27 @@ public class UserDao {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+        }
+
+        return id;
+    }
+
+    //TODO make selectQuery()
+    public Long addUser(User user) throws ClassNotFoundException, SQLException {
+        // database is in mysql
+        Connection connection = null;
+        PrepareStatementStrategy statementStrategy = new AddUserStatement();
+        try {
+            connection = connectionMaker.getConnection();
+            updateQuery(connection, statementStrategy, user);
+
+            long id = getLastInsertId(connection);
+            return id;
+        } catch (ClassNotFoundException e) {
+            throw e;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
             if(connection != null)
                 try {
                     connection.close();
@@ -103,27 +117,17 @@ public class UserDao {
     }
 
     public void updateUser(User user) throws SQLException, ClassNotFoundException {
-        PreparedStatement query = null;
         Connection connection = null;
+        PrepareStatementStrategy statementStrategy = new UpdateUserStatement();
         try {
             connection = connectionMaker.getConnection();
-            query = connection.prepareStatement("update userinfo set name=?, password=? where id = ?");
-            query.setString(1, user.getName());
-            query.setString(2, user.getPassword());
-            query.setLong(3, user.getId());
-            query.executeUpdate();
+            updateQuery(connection, statementStrategy, user);
         } catch (ClassNotFoundException e) {
             throw e;
         } catch (SQLException e) {
             throw e;
         } finally {
-            if(query != null)
-                try {
-                    query.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            if(connection != null)
+            if(connection !=null)
                 try {
                     connection.close();
                 } catch (SQLException e) {
@@ -133,28 +137,36 @@ public class UserDao {
     }
 
     public void deleteUser(Long id) throws SQLException, ClassNotFoundException {
-        PreparedStatement query = null;
         Connection connection = null;
+        PrepareStatementStrategy statementStrategy = new DeleteUserStatement();
         try {
             connection = connectionMaker.getConnection();
-            query = connection.prepareStatement("delete from userinfo where id = ?");
-            query.setLong(1, id);
-            query.executeUpdate();
-
+            updateQuery(connection, statementStrategy, id);
         } catch (ClassNotFoundException e) {
             throw e;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if(connection !=null)
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    private void updateQuery(Connection connection, PrepareStatementStrategy statementStrategy, Object object) throws ClassNotFoundException, SQLException {
+        PreparedStatement query = null;
+        try {
+            query = statementStrategy.makePrepareStatement(connection, object);
+            query.executeUpdate();
         } catch (SQLException e) {
             throw e;
         } finally {
             if(query != null)
                 try {
                     query.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            if(connection != null)
-                try {
-                    connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
