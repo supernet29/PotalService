@@ -131,6 +131,16 @@ public class DBContext {
         }
     }
 
+   public PrepareStatementStrategy prepareStatementParmameterSetting(String sql, Object[] parms) {
+        return connection -> {
+            PreparedStatement query = connection.prepareStatement(sql);
+            for(int i = 1; i <= parms.length; i++){
+                query.setObject(i, parms[i-1]);
+            }
+            return query;
+        };
+    }
+
     public void setConnectionMaker(DataSource connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
