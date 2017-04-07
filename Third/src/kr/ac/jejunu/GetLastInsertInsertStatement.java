@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class GetLastInsertInsertStatement implements PrepareStatementStrategy{
     @Override
-    public PreparedStatement makePrepareStatement(Connection connection, Object object) throws SQLException {
+    public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
         PreparedStatement query = connection.prepareStatement("select last_insert_id()");
         return query;
     }
