@@ -5,8 +5,8 @@
     <bean name="userDao" class="kr.ac.jejunu.UserDao">
         <property name="context" ref="dbContext"/>
     </bean>
-    <bean name="dbContext" class="kr.ac.jejunu.DBContext" >
-       <property name="connectionMaker" ref="getConnectionMaker" />
+    <bean name="dbContext" class="org.springframework.jdbc.core.JdbcTemplate">
+       <property name="dataSource" ref="getConnectionMaker" />
     </bean>
     <bean name="getConnectionMaker" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="username" value="root"/>
