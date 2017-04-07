@@ -3,7 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean name="userDao" class="kr.ac.jejunu.UserDao">
-       <constructor-arg ref="getConnectionMaker"></constructor-arg>
+        <property name="context" ref="dbContext"/>
+    </bean>
+    <bean name="dbContext" class="kr.ac.jejunu.DBContext" >
+       <property name="connectionMaker" ref="getConnectionMaker" />
     </bean>
     <bean name="getConnectionMaker" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="username" value="root"/>
