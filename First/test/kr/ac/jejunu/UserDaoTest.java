@@ -13,7 +13,7 @@ import static org.hamcrest.core.Is.is;
 public class UserDaoTest {
     @Test
     public void getUserName() throws Exception{
-        UserDao userDao = new JejuUserDao();
+        UserDao userDao = new UserDao(new JejuConnectionMaker());
         long id  = 1;
         String name = "woochan";
         String password = "1234";
@@ -36,7 +36,7 @@ public class UserDaoTest {
         user.setName(name);
         user.setPassword(password);
 
-        UserDao userDao = new JejuUserDao();
+        UserDao userDao = new UserDao(new JejuConnectionMaker());
         userDao.addUser(user);
 
         user = userDao.getUser(id);

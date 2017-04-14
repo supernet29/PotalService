@@ -1,18 +1,20 @@
 package kr.ac.jejunu;
 
-import javax.sql.ConnectionPoolDataSource;
 import java.sql.*;
-import java.util.Objects;
 
 /**
  * Created by super on 2017-03-15.
  */
-public abstract class UserDao {
+public class UserDao {
 
-    protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+    private ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker){
+        this.connectionMaker = connectionMaker;
+    }
 
     public User getUser(long id) throws SQLException, ClassNotFoundException {
-        Connection connection = getConnection();
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement query = connection.prepareStatement("select id, name, password from userinfo where id = ?");
         query.setLong(1, id);
         ResultSet result = query.executeQuery();
@@ -27,7 +29,7 @@ public abstract class UserDao {
 
 
     public void addUser(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = getConnection();
+        Connection connection = connectionMaker.getConnection();
         PreparedStatement query = connection.prepareStatement("insert into userinfo (id, name, password) values(?, ?, ?)");
         query.setLong(1, user.getId());
         query.setString(2, user.getName());
