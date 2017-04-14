@@ -11,7 +11,7 @@ public class UserDao {
     public User getUser(long id) throws SQLException, ClassNotFoundException {
         // database is in mysql
         Connection connection = getConnection();
-        PreparedStatement query = connection.prepareStatement("select id, name, password from jeju where id = ?");
+        PreparedStatement query = connection.prepareStatement("select id, name, password from userinfo where id = ?");
         query.setLong(1, id);
         ResultSet result = query.executeQuery();
         result.next();
@@ -25,13 +25,13 @@ public class UserDao {
 
     private Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        return DriverManager.getConnection("jdbc:mysql://localhost/jeju?characterEncoding=utf-8", "jeju", "1234");
+        return DriverManager.getConnection("jdbc:mysql://117.17.102.106/woochan?characterEncoding=utf-8", "root", "1234");
     }
 
     public Long addUser(User user) throws ClassNotFoundException, SQLException {
         // database is in mysql
         Connection connection = getConnection();
-        PreparedStatement query = connection.prepareStatement("insert into jeju (name, password) values(?, ?)");
+        PreparedStatement query = connection.prepareStatement("insert into userinfo (name, password) values(?, ?)");
         query.setString(1, user.getName());
         query.setString(2, user.getPassword());
         query.executeUpdate();

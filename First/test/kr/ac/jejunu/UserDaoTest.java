@@ -14,7 +14,7 @@ public class UserDaoTest {
         UserDao userDao = new UserDao();
         long id  = 1;
         String name = "woochan";
-        String password = "pass";
+        String password = "1234";
 
         User user = userDao.getUser(id);
         Assert.assertThat(id , is(user.getId()));
