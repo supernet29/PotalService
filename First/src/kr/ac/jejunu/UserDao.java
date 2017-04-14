@@ -1,5 +1,6 @@
 package kr.ac.jejunu;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 /**
@@ -7,11 +8,7 @@ import java.sql.*;
  */
 public class UserDao {
 
-    private ConnectionMaker connectionMaker;
-
-    public UserDao(ConnectionMaker connectionMaker){
-        this.connectionMaker = connectionMaker;
-    }
+    private DataSource connectionMaker;
 
     public User getUser(long id) throws SQLException, ClassNotFoundException {
         Connection connection = connectionMaker.getConnection();
@@ -38,5 +35,9 @@ public class UserDao {
 
         query.close();
         connection.close();
+    }
+
+    public void setConnectionMaker(DataSource connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 }
