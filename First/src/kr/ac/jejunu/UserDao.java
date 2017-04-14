@@ -7,9 +7,11 @@ import java.util.Objects;
 /**
  * Created by super on 2017-03-15.
  */
-public class UserDao {
+public abstract class UserDao {
+
+    protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+
     public User getUser(long id) throws SQLException, ClassNotFoundException {
-        // database is in mysql
         Connection connection = getConnection();
         PreparedStatement query = connection.prepareStatement("select id, name, password from userinfo where id = ?");
         query.setLong(1, id);
@@ -23,13 +25,8 @@ public class UserDao {
         return user;
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        return DriverManager.getConnection("jdbc:mysql://117.17.102.106/woochan?characterEncoding=utf-8", "root", "1234");
-    }
 
     public void addUser(User user) throws ClassNotFoundException, SQLException {
-        // database is in mysql
         Connection connection = getConnection();
         PreparedStatement query = connection.prepareStatement("insert into userinfo (id, name, password) values(?, ?, ?)");
         query.setLong(1, user.getId());
