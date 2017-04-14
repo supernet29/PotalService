@@ -1,38 +1,47 @@
 package kr.ac.jejunu;
 
-import javax.sql.DataSource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.sql.*;
 
 /**
  * Created by super on 2017-03-15.
  */
 public class UserDao {
-    private DBContext dbContext;
+    private JdbcTemplate jdbcTemplate;
 
     public User getUser(long id) throws SQLException, ClassNotFoundException {
         String sql = "select id, name, password from userinfo where id = ?";
         Object[] parms = new Object[] {id};
-        PreparedStatementStrategy statementStrategy = dbContext.makePrepareStatement(sql, parms);
-        return dbContext.selectQuery(statementStrategy);
+        User result = null;
+        try {
+            result = jdbcTemplate.queryForObject(sql, parms, (resultSet, i) -> {
+                User user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setName(resultSet.getString("name"));
+                user.setPassword(resultSet.getString("password"));
+                return user;
+            });
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
-
 
     public void addUser(User user) throws ClassNotFoundException, SQLException {
         String sql = "insert into userinfo (id, name, password) values(?, ?, ?)";
         Object[] parms = new Object[] { user.getId(), user.getName(), user.getPassword()};
-        PreparedStatementStrategy preparedStatementStrategy = dbContext.makePrepareStatement(sql, parms);
-        dbContext.UpdateQuery(preparedStatementStrategy);
+        jdbcTemplate.update(sql, parms);
     }
-
 
     public void deleteUser(long id) throws SQLException {
         String sql = "delete from userinfo where id = ?";
         Object[] parms = new Object[] {id};
-        PreparedStatementStrategy preparedStatementStrategy = dbContext.makePrepareStatement(sql, parms);
-        dbContext.UpdateQuery(preparedStatementStrategy);
+        jdbcTemplate.update(sql, parms);
     }
 
-    public void setDbContext(DBContext dbContext) {
-        this.dbContext = dbContext;
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 }
