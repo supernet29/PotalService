@@ -1,6 +1,7 @@
 package kr.ac.jejunu;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
@@ -11,13 +12,21 @@ import static org.hamcrest.core.Is.is;
  * Created by super on 2017-03-15.
  */
 public class UserDaoTest {
+
+    private UserDaoFactory userDaoFactory;
+
+    @Before
+    public void before() throws Exception{
+       userDaoFactory = new UserDaoFactory();
+    }
+
     @Test
     public void getUserName() throws Exception{
-        UserDao userDao = new UserDao(new JejuConnectionMaker());
         long id  = 1;
         String name = "woochan";
         String password = "1234";
 
+        UserDao userDao =  userDaoFactory.getUserDao();
         User user = userDao.getUser(id);
         Assert.assertThat(id , is(user.getId()));
         Assert.assertThat(name , is(user.getName()));
@@ -36,7 +45,7 @@ public class UserDaoTest {
         user.setName(name);
         user.setPassword(password);
 
-        UserDao userDao = new UserDao(new JejuConnectionMaker());
+        UserDao userDao =  userDaoFactory.getUserDao();
         userDao.addUser(user);
 
         user = userDao.getUser(id);
