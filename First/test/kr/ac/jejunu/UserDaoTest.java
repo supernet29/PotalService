@@ -3,6 +3,10 @@ package kr.ac.jejunu;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.GenericGroovyApplicationContext;
 
 import java.util.Random;
 
@@ -13,11 +17,13 @@ import static org.hamcrest.core.Is.is;
  */
 public class UserDaoTest {
 
-    private UserDaoFactory userDaoFactory;
+    UserDao userDao;
 
     @Before
     public void before() throws Exception{
-       userDaoFactory = new UserDaoFactory();
+        ApplicationContext context = new AnnotationConfigApplicationContext(UserDaoFactory.class);
+        userDao =  context.getBean("UserDao", UserDao.class);
+
     }
 
     @Test
@@ -26,7 +32,6 @@ public class UserDaoTest {
         String name = "woochan";
         String password = "1234";
 
-        UserDao userDao =  userDaoFactory.getUserDao();
         User user = userDao.getUser(id);
         Assert.assertThat(id , is(user.getId()));
         Assert.assertThat(name , is(user.getName()));
@@ -45,7 +50,6 @@ public class UserDaoTest {
         user.setName(name);
         user.setPassword(password);
 
-        UserDao userDao =  userDaoFactory.getUserDao();
         userDao.addUser(user);
 
         user = userDao.getUser(id);
