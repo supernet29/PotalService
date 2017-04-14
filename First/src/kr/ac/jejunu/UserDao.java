@@ -28,23 +28,16 @@ public class UserDao {
         return DriverManager.getConnection("jdbc:mysql://117.17.102.106/woochan?characterEncoding=utf-8", "root", "1234");
     }
 
-    public Long addUser(User user) throws ClassNotFoundException, SQLException {
+    public void addUser(User user) throws ClassNotFoundException, SQLException {
         // database is in mysql
         Connection connection = getConnection();
-        PreparedStatement query = connection.prepareStatement("insert into userinfo (name, password) values(?, ?)");
-        query.setString(1, user.getName());
-        query.setString(2, user.getPassword());
+        PreparedStatement query = connection.prepareStatement("insert into userinfo (id, name, password) values(?, ?, ?)");
+        query.setLong(1, user.getId());
+        query.setString(2, user.getName());
+        query.setString(3, user.getPassword());
         query.executeUpdate();
-        query.close();
 
-        query = connection.prepareStatement("select last_insert_id()");
-        ResultSet resultSet = query.executeQuery();
-        resultSet.next();
-
-        long id = resultSet.getLong(1);
-        resultSet.close();
         query.close();
         connection.close();
-        return id;
     }
 }
