@@ -55,7 +55,7 @@ public class UserDao {
         PreparedStatement query = null;
         try {
             connection = dataSource.getConnection();
-            query = preparedStatementStrategy.getPreparedStatement();
+            query = preparedStatementStrategy.getPreparedStatement(connection);
             query.executeUpdate();
         } finally {
             if(query != null)
@@ -78,7 +78,7 @@ public class UserDao {
         Connection connection = dataSource.getConnection();
         PreparedStatement query = null;
         try {
-            query = preparedStatementStrategy.getPreparedStatement();
+            query = preparedStatementStrategy.getPreparedStatement(connection);
             query.executeUpdate();
         } finally {
             if(query != null)
