@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
+import javax.lang.model.type.NullType;
 import java.util.Random;
 
 import static org.hamcrest.core.Is.is;
@@ -24,7 +25,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void getUserName() throws Exception{
+    public void getUser() throws Exception{
         long id  = 1;
         String name = "woochan";
         String password = "1234";
@@ -53,5 +54,23 @@ public class UserDaoTest {
         Assert.assertThat(user.getId(), is(id));
         Assert.assertThat(name, is(user.getName()));
         Assert.assertThat(password, is(user.getPassword()));
+    }
+
+    @Test
+    public void deleteUser() throws Exception{
+        Random random = new Random(System.currentTimeMillis());
+        long id = random.nextLong();
+        String name = "우찬";
+        String password = "aasdf";
+
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setPassword(password);
+
+        userDao.addUser(user);
+        userDao.deleteUser(id);
+        user =  userDao.getUser(id);
+        Assert.assertNull(user);
     }
 }

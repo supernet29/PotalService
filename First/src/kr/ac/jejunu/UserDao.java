@@ -8,10 +8,10 @@ import java.sql.*;
  */
 public class UserDao {
 
-    private DataSource connectionMaker;
+    private DataSource dataSource;
 
     public User getUser(long id) throws SQLException, ClassNotFoundException {
-        Connection connection = connectionMaker.getConnection();
+        Connection connection = dataSource.getConnection();
         User user = null;
         ResultSet result = null;
         PreparedStatement query = null;
@@ -52,7 +52,7 @@ public class UserDao {
 
 
     public void addUser(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = connectionMaker.getConnection();
+        Connection connection = dataSource.getConnection();
         PreparedStatement query = null;
         try {
             query = connection.prepareStatement("insert into userinfo (id, name, password) values(?, ?, ?)");
@@ -76,7 +76,31 @@ public class UserDao {
         }
     }
 
-    public void setConnectionMaker(DataSource connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void deleteUser(long id) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        PreparedStatement query = null;
+        try {
+            query = connection.prepareStatement("delete from userinfo where id = ?");
+            query.setLong(1, id);
+            query.executeUpdate();
+        } finally {
+            if(query != null)
+                try {
+                    query.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            if(query != null)
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
     }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
 }
